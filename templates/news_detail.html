@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}{{ news.title }}{% endblock %}
+{% block content %}
+<div class="news-detail fade-in">
+  <h2>{{ news.title }}</h2>
+  <p><em>{{ news.date }}</em></p>
+  <img src="{{ url_for('static', filename='img/' + news.img) }}" alt="Новость">
+  <p>{{ news.content }}</p>
+  <p>Подробности: В этом месяце автопроизводитель сообщил о выходе новой модели, оснащённой современными технологиями, включая автопилот, улучшенную батарею и повышенную безопасность.</p>
+  <p>Компания рассчитывает на рост спроса в Европе и Азии, в том числе за счёт расширения сети зарядных станций.</p>
+  <a href="{{ url_for('auction') }}">← Назад к аукциону</a>
+</div>
+{% endblock %}

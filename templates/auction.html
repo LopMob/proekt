@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Аукцион автомобилей</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+
+        .main {
+            flex: 3;
+        }
+
+        .news {
+            flex: 1;
+            margin-left: 30px;
+            padding-left: 20px;
+            border-left: 1px solid #ccc;
+        }
+
+        .lot {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .lot img {
+            width: 180px;
+            height: 120px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+
+        .lot-info h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .lot-info p {
+            margin: 5px 0;
+        }
+
+        .lot-info a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .lot-info a:hover {
+            text-decoration: underline;
+        }
+
+        .news h3 {
+            margin-top: 0;
+        }
+
+        .news ul {
+            padding-left: 18px;
+        }
+
+        .news li {
+            margin-bottom: 10px;
+        }
+
+        .add-button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin: 30px auto;
+        }
+
+        .add-button:hover {
+            background-color: #218838;
+        }
+
+        .add-lot-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align:center; margin-top: 20px;">Добро пожаловать на аукцион автомобилей!</h1>
+
+    <div class="container">
+        <div class="main">
+            {% for lot in [
+                {"id": 1, "title": "Tesla Model S", "img": "tesla.jpg", "price": "3 000 000 ₽"},
+                {"id": 2, "title": "BMW M5", "img": "bmw.jpg", "price": "4 500 000 ₽"},
+                {"id": 3, "title": "Lada Aura", "img": "lada.jpg", "price": "1 500 000 ₽"}
+            ] %}
+            <div class="lot">
+                <img src="{{ url_for('static', filename='images/' + lot.img) }}" alt="{{ lot.title }}">
+                <div class="lot-info">
+                    <h3>{{ lot.title }}</h3>
+                    <p>Цена: {{ lot.price }}</p>
+                    <a href="{{ url_for('lot_detail', lot_id=lot.id) }}">Подробнее</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="news">
+            <h3>Новости</h3>
+            <ul>
+                {% for n in news %}
+                <li>
+                    <a href="{{ url_for('news_detail', news_id=n.id) }}">{{ n.title }}</a><br>
+                    <small>{{ n.date }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="add-lot-container">
+        <a href="{{ url_for('add_lot') }}" class="add-button">Добавить лот</a>
+    </div>
+
+</body>
+</html>

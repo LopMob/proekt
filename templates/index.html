@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить лот</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #0088cc;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0077b3;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Новый лот</h1>
+        <input type="text" id="brand" placeholder="Марка">
+        <input type="text" id="model" placeholder="Модель">
+        <input type="number" id="year" placeholder="Год">
+        <input type="file" id="photo" accept="image/*">
+        <button class="btn" id="sendBtn">Отправить лот</button>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('sendBtn').addEventListener('click', function () {
+            const status = document.getElementById('status');
+            const brand = document.getElementById('brand').value.trim();
+            const model = document.getElementById('model').value.trim();
+            const year = document.getElementById('year').value.trim();
+            const photo = document.getElementById('photo').files[0];
+
+            if (!brand || !model || !year || !photo) {
+                status.textContent = 'Пожалуйста, заполните все поля и выберите фото.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('brand', brand);
+            formData.append('model', model);
+            formData.append('year', year);
+            formData.append('photo', photo);
+
+            status.textContent = 'Отправка...';
+            fetch('/send', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    status.textContent = 'Лот успешно отправлен!';
+                } else {
+                    status.textContent = 'Ошибка: ' + data.description;
+                }
+            })
+            .catch(error => {
+                status.textContent = 'Ошибка соединения: ' + error.message;
+            });
+        });
+    </script>
+</body>
+</html>
