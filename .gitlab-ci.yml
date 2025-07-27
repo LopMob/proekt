@@ -38,4 +38,4 @@ deploy_example:
     - cat output/test.txt
     - echo "Успех! Runner полностью работоспособен."
   only:
-    - main  # Запускать только для ветки main
+    - main  # Запускать только для ветки mainf
