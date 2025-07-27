@@ -5,4 +5,4 @@ stages:
 test_runner:
   stage: test
   script:
-    - echo "Runner работает! Текущая дата:"
+    - echo "R.unner работает! Текущая дата:"
