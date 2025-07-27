@@ -1,0 +1,47 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: "alpine:latest"
+
+# Тестовая работа с shell-командами
+test_runner:
+  stage: test
+  script:
+    - echo "Runner работает! Текущая дата: $(date)"
+    - uname -a
+    - echo "Проверка доступа в интернет:" && ping -c 3 gitlab.com || echo "Ping не доступен, но это не всегда ошибка"
+    - echo "Список файлов в текущей директории:" && ls -la
+
+# Проверка работы Docker (если используется Docker executor)
+test_docker:
+  stage: test
+  image: $DOCKER_IMAGE
+  script:
+    - echo "Проверка Docker внутри Runner:"
+    - docker --version || echo "Docker не доступен!"
+    - echo "Запуск тестового контейнера:"
+    - docker run --rm $DOCKER_IMAGE echo "Привет из контейнера!"
+
+# Имитация сборки (артефакт)
+build_example:
+  stage: build
+  script:
+    - echo "Создаем тестовый артефакт..."
+    - mkdir -p output
+    - echo "Это тестовый артефакт" > output/test.txt
+  artifacts:
+    paths:
+      - output/
+
+# Фейковый деплой (для проверки стадий)
+deploy_example:
+  stage: deploy
+  script:
+    - echo "Деплой на тестовую среду..."
+    - cat output/test.txt
+    - echo "Успех! Runner полностью работоспособен."
+  only:
+    - main  # Запускать только для ветки main
