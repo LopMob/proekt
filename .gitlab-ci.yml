@@ -10,7 +10,7 @@ variables:
 test_runner:
   stage: test
   script:
-    - echo "Runner работает! Текущая дата: $(date)"
+    - echo "Runner работает! Текущая дата:"
     - uname -a
     - echo "Проверка доступа в интернет:" && ping -c 3 gitlab.com || echo "Ping не доступен, но это не всегда ошибка"
     - echo "Список файлов в текущей директории:" && ls -la
