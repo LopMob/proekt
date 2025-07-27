@@ -1,10 +1,5 @@
 stages:
   - test
-  - build
-  - deploy
-
-variables:
-  DOCKER_IMAGE: "alpine:latest"
 
 # Тестовая работа с shell-командами
 test_runner:
