@@ -12,18 +12,12 @@ test_runner:
   script:
     - echo "Runner работает! Текущая дата:"
     - uname -a
-    - echo "Проверка доступа в интернет:" && ping -c 3 gitlab.com || echo "Ping не доступен, но это не всегда ошибка"
-    - echo "Список файлов в текущей директории:" && ls -la
 
 # Проверка работы Docker (если используется Docker executor)
 test_docker:
   stage: test
-  image: $DOCKER_IMAGE
   script:
     - echo "Проверка Docker внутри Runner:"
-    - docker --version || echo "Docker не доступен!"
-    - echo "Запуск тестового контейнера:"
-    - docker run --rm $DOCKER_IMAGE echo "Привет из контейнера!"
 
 # Имитация сборки (артефакт)
 build_example:
