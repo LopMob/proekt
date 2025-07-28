@@ -6,3 +6,5 @@ test_runner:
   stage: test
   script:
     - echo "R.unner работает! Текущая дата:"
+  tags:
+    - linux
