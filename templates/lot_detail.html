@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block title %}{{ lot.title }}{% endblock %}
+{% block content %}
+<div class="lot-detail fade-in">
+  <h2>{{ lot.title }}</h2>
+  <img src="{{ url_for('static', filename='img/' + lot.img) }}" alt="{{ lot.title }}" class="lot-image">
+  <ul>
+    <li><strong>Год:</strong> {{ lot.year }}</li>
+    <li><strong>Двигатель:</strong> {{ lot.engine }}</li>
+    <li><strong>Лошадиные силы:</strong> {{ lot.hp }}</li>
+    <li><strong>Цвет:</strong> {{ lot.color }}</li>
+    <li><strong>Ставка:</strong> {{ lot.price }}</li>
+  </ul>
+  <a href="{{ url_for('auction') }}">← Назад к аукциону</a>
+</div>
+{% endblock %}
