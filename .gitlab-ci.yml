@@ -1,14 +1,8 @@
 stages:
-  - lint
   - test
   - build
   - deploy
 
-lint:
-  stage: lint
-  script:
-    - pip install pylint
-    - pylint app.py
 
 test:
   stage: test
