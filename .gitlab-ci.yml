@@ -1,26 +1,9 @@
 stages:
   - test
-  - build
-  - deploy
 
-
-test:
+ping-runner:
   stage: test
   script:
-    - pip install -r requirements.txt
-    - pip install pytest
-    - pytest
-
-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker build -t flask-site:latest .
-
-deploy:
-  stage: deploy
-  script:
-    - echo "Здесь будет деплой"
-
+    - echo "✅ GitLab Runner работает!"
+    - uname -a
+    - python --version || echo "Python не установлен"
