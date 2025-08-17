@@ -2,15 +2,77 @@
 {% block title %}{{ lot.title }}{% endblock %}
 {% block content %}
 <div class="lot-detail fade-in">
-  <h2>{{ lot.title }}</h2>
-  <img src="{{ url_for('static', filename='img/' + lot.img) }}" alt="{{ lot.title }}" class="lot-image">
-  <ul>
-    <li><strong>Год:</strong> {{ lot.year }}</li>
-    <li><strong>Двигатель:</strong> {{ lot.engine }}</li>
-    <li><strong>Лошадиные силы:</strong> {{ lot.hp }}</li>
-    <li><strong>Цвет:</strong> {{ lot.color }}</li>
-    <li><strong>Ставка:</strong> {{ lot.price }}</li>
-  </ul>
-  <a href="{{ url_for('auction') }}">← Назад к аукциону</a>
+  <h1>{{ lot.title }}</h1>
+  
+  <img src="{{ url_for('static', filename=lot.img) }}" alt="{{ lot.title }}" class="lot-image">
+  
+  <div class="lot-specs">
+    <ul>
+      <li><strong>Год:</strong> {{ lot.year }}</li>
+      <li><strong>Двигатель:</strong> {{ lot.engine }}</li>
+      <li><strong>Лошадиные силы:</strong> {{ lot.hp }}</li>
+      <li><strong>Цвет:</strong> {{ lot.color }}</li>
+      <li><strong>Ставка:</strong> {{ lot.price }}</li>
+    </ul>
+  </div>
+  
+  <a href="{{ url_for('auction') }}" class="back-link">← Назад к аукциону</a>
 </div>
+
+<style>
+  .lot-detail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .lot-image {
+    display: block;
+    margin: 20px auto;
+    width: 800px;
+    height: 550px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  
+  .lot-specs {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin: 20px auto 40px;
+  }
+  
+  .lot-specs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .lot-specs li {
+    margin-bottom: 10px;
+  }
+  
+  .lot-specs strong {
+    color: #555;
+  }
+  
+  .back-link {
+    display: inline-block;
+    font-size: 16px;
+    color: #444;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    color: #000;
+    background-color: #f0f0f0;
+  }
+</style>
 {% endblock %}

@@ -108,16 +108,13 @@
 
     <div class="container">
         <div class="main">
-            {% for lot in [
-                {"id": 1, "title": "Tesla Model S", "img": "tesla.jpg", "price": "3 000 000 ₽"},
-                {"id": 2, "title": "BMW M5", "img": "bmw.jpg", "price": "4 500 000 ₽"},
-                {"id": 3, "title": "Lada Aura", "img": "lada.jpg", "price": "1 500 000 ₽"}
-            ] %}
+            {% for lot in lots %}
             <div class="lot">
-                <img src="{{ url_for('static', filename='images/' + lot.img) }}" alt="{{ lot.title }}">
+                <img src="{{ url_for('static', filename=lot.img) }}" alt="{{ lot.title }}">
                 <div class="lot-info">
                     <h3>{{ lot.title }}</h3>
-                    <p>Цена: {{ lot.price }}</p>
+                    <p>Цена: {{ lot.price }} ₽</p>
+                    <p>Время до конца: <span class="timer" data-end="{{ lot.end_time }}"></span></p>
                     <a href="{{ url_for('lot_detail', lot_id=lot.id) }}">Подробнее</a>
                 </div>
             </div>
@@ -142,4 +139,29 @@
     </div>
 
 </body>
+<script>
+function updateTimers() {
+    const timers = document.querySelectorAll('.timer');
+    const now = new Date().getTime();
+
+    timers.forEach(timer => {
+        const endTime = new Date(timer.dataset.end).getTime();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+            timer.textContent = "Лот закрыт";
+            return;
+        }
+
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    });
+}
+
+setInterval(updateTimers, 1000);
+updateTimers();
+</script>
 </html>
+

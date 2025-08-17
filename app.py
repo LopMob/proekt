@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 import sqlite3, os
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = 'secret-key'
@@ -10,13 +10,14 @@ UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Хранилище лотов (динамические + статические)
+# Хранилище лотов (статическое)
 static_lots = [
-    {"id": 1, "title": "Tesla Model S", "year": 2022, "engine": "Dual Motor 100 kWh", "hp": 762, "color": "Чёрный", "price": "3 000 000 ₽", "img": "tesla.jpg"},
-    {"id": 2, "title": "BMW M5", "year": 2020, "engine": "4.4L V8", "hp": 600, "color": "Синий", "price": "4 500 000 ₽", "img": "bmw.jpg"},
-    {"id": 3, "title": "Lada Aura", "year": 2022, "engine": "1.6 turbo", "hp": 230, "color": "Зелёный", "price": "1 500 000 ₽", "img": "lada.jpg"},
+    {"id": 1, "title": "Tesla Model S", "year": 2022, "engine": "Dual Motor 100 kWh", "hp": 762, "color": "Чёрный", "price": "3000000", "img": "img/tesla.jpg"},
+    {"id": 2, "title": "BMW M5", "year": 2020, "engine": "4.4L V8", "hp": 600, "color": "Синий", "price": "4500000", "img": "img/bmw.jpg"},
+    {"id": 3, "title": "Lada Aura", "year": 2022, "engine": "1.6 turbo", "hp": 230, "color": "Зелёный", "price": "1500000", "img": "img/lada.jpg"},
 ]
 dynamic_lots = []
+
 
 # --- DB INIT ---
 def init_db():
@@ -64,15 +65,30 @@ def login():
                 return "Неверные данные"
     return render_template('login.html')
 
-
 @app.route('/auction')
 def auction():
     if 'user' not in session:
         return redirect(url_for('login'))
 
-    combined_lots = static_lots + [
-        {**lot, "id": len(static_lots) + i + 1} for i, lot in enumerate(dynamic_lots)
-    ]
+    now = datetime.utcnow()
+
+    # Для static_lots - проверяем есть ли у лота end_time, если нет — создаём и сохраняем (будет срабатывать один раз)
+    for lot in static_lots:
+        if 'end_time' not in lot:
+            lot['end_time'] = (now + timedelta(minutes=5)).isoformat()
+
+    # Для dynamic_lots - то же самое
+    for lot in dynamic_lots:
+        if 'end_time' not in lot:
+            lot['end_time'] = (now + timedelta(minutes=5)).isoformat()
+
+    # Объединяем лоты и добавляем id для динамических
+    combined_lots = []
+    for lot in static_lots:
+        combined_lots.append(lot)
+    for i, lot in enumerate(dynamic_lots):
+        lot['id'] = len(static_lots) + i + 1
+        combined_lots.append(lot)
 
     news_list = [
         {"id": 1, "title": "Новый электрокар Tesla", "date": "2025-07-01"},
@@ -85,25 +101,38 @@ def auction():
 @app.route('/news/<int:news_id>')
 def news_detail(news_id):
     news_data = {
-        1: {
-            "title": "Новый электрокар Tesla",
-            "content": "Tesla выпустила новый электромобиль с запасом хода более 800 км...",
-            "date": "2025-07-01",
-            "img": "news1.jpg"
-        },
-        2: {
-            "title": "Снижение цен на BMW",
-            "content": "BMW снизила цены на модели M-серии...",
-            "date": "2025-07-15",
-            "img": "news2.jpg"
-        },
-        3: {
-            "title": "Новые правила ОСАГО",
-            "content": "С 1 августа вступают в силу новые правила расчета стоимости ОСАГО...",
-            "date": "2025-07-20",
-            "img": "news3.jpg"
-        }
+    1: {
+        "title": "Новый электрокар Tesla",
+        "content": (
+            "Tesla выпустила новый электромобиль с запасом хода более 800 км, "
+            "который способен конкурировать с лучшими бензиновыми аналогами по динамике и комфорту. "
+            "Автомобиль оснащён обновлённой системой автопилота, улучшенным интерьером и расширенным набором функций безопасности. "
+            "Эксперты отмечают, что новая модель способна значительно изменить рынок электромобилей в ближайшие годы."
+        ),
+        "date": "2025-07-01",
+        "img": "news1.jpg"
+    },
+    2: {
+        "title": "Снижение цен на BMW",
+        "content": (
+            "BMW объявила о снижении цен на популярные модели M-серии в связи с обновлением линейки 2025 года. "
+            "Покупатели теперь могут приобрести спорткары с улучшенной комплектацией и дополнительными опциями по более выгодной цене. "
+            "Также компания запустила новую программу лояльности для постоянных клиентов, которая включает сервисное обслуживание и эксклюзивные предложения."
+        ),
+        "date": "2025-07-15",
+        "img": "news2.jpg"
+    },
+    3: {
+        "title": "Новые правила ОСАГО",
+        "content": (
+            "С 1 августа вступают в силу новые правила расчёта стоимости ОСАГО, направленные на упрощение процедуры и повышение прозрачности тарифов. "
+            "Изменения предусматривают внедрение цифровых технологий для оформления страховок и снижение бюрократической нагрузки на водителей. "
+            "Эксперты считают, что нововведения помогут повысить доступность страхования и улучшить качество услуг на рынке."
+        ),
+        "date": "2025-07-20",
+        "img": "news3.jpg"
     }
+}
     news = news_data.get(news_id)
     if not news:
         return "Новость не найдена"
@@ -121,6 +150,7 @@ def lot_detail(lot_id):
 
 @app.route('/add_lot', methods=['GET', 'POST'])
 def add_lot():
+    global static_lots
     if 'user' not in session:
         return redirect(url_for('login'))
 
@@ -132,7 +162,6 @@ def add_lot():
         color = request.form['color']
         price = request.form['price']
 
-        # обработка изображения
         file = request.files['img']
         if file and file.filename:
             filename = secure_filename(file.filename)
@@ -142,20 +171,23 @@ def add_lot():
             filename = "default.jpg"
 
         new_lot = {
+            "id": len(static_lots) + 1,
             "title": title,
             "year": year,
             "engine": engine,
             "hp": hp,
             "color": color,
             "price": price,
-            "img": f"uploads/{filename}"
+            "img": f"uploads/{filename}",
+	    "end_time": (datetime.utcnow() + timedelta(minutes=5)).isoformat()
         }
-        dynamic_lots.append(new_lot)
+
+        static_lots.append(new_lot)
+
         return redirect(url_for('auction'))
 
     return render_template('add_lot.html')
 
-
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)

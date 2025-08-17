@@ -1,9 +1,38 @@
 stages:
   - test
+<<<<<<< HEAD
 
 ping-runner:
-  stage: test
+=======
+  - build
+
+lint:
+  stage: lint
+  image: python:3.12
   script:
+    - pip install pylint
+    - pylint app.py
+
+test:
+>>>>>>> 4d601b8 (neww)
+  stage: test
+  image: python:3.12
+  script:
+<<<<<<< HEAD
     - echo "✅ GitLab Runner работает!"
     - uname -a
     - python --version || echo "Python не установлен"
+=======
+    - pip install -r requirements.txt
+    - pip install pytest
+    - pytest
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t flask-site:latest .
+
+>>>>>>> 4d601b8 (neww)
